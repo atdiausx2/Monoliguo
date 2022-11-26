@@ -1,1 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+// html, body{
+//     background-color: pink;
+// }
+
+span.red {
+    color: red;
+
+}
+
+span.green {
+    color: green;
+}
+
+.choice {margin-right:2cm; margin-left:1cm; margin-bottom:1em; margin-top: 1em}
+
+.btn {margin-top: 2em; margin-bottom: 2em; margin-right: 1em; margin-left: 1em;
+background-color: "red"; 
+border-color: "blue"; color: "green"}
+
+.area {margin-top: 2em;
+    margin-bottom: 3em;
+     margin-right: 1em; 
+     margin-left: 2em;
+     border-color: "blue"}
