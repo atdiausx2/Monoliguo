@@ -161,11 +161,14 @@ export class AppComponent {
   answerInput: string = '';
   result: string = ''
   assignmentSourceChunk:any= '';
-  assignmentText :string='';
+  // assignmentText :string='';
+  proceed_phrase:string = 'Submit';
+  submission_phase: boolean = true; 
 
   no_assignments: number = 0; 
   difficultyLevel:string = 'intermediate';
   difficultyDictionary = new Map().set('Difficult', 3).set('Intermediate', 2).set('Beginner', 1); 
+  assignmentText = 'Otrdien, es pieceļos astotais no rīta \r\nEs eju uz vannas istaba un es duša\r\nEs īzeja no dušas un nosusinu matus';
 
   
   dataColumns: string[] = [
@@ -201,26 +204,24 @@ export class AppComponent {
 
   // }
 
+
+
+
   updateAssignment() {
     // this.loadData
-
-    // this.no_assignments = Math.floor(Math.random()*this.difficultyDictionary.get(this.difficultyLevel))+1;
-
-
-    // this.first_assignment_pointer = Math.floor(Math.random()*1015);
-    // this.assignmentSourceChunk= (this.dataset[this.first_assignment_pointer]).toString();
+    this.submission_phase = true;
+    this.no_assignments = Math.floor(Math.random()*this.difficultyDictionary.get(this.difficultyLevel))+1;
 
 
+    this.first_assignment_pointer = Math.floor(Math.random()*1015);
+    this.assignmentSourceChunk= (this.dataset[this.first_assignment_pointer]).toString();
 
     // this.last_assignment_pointer  = this.first_assignment_pointer + this.no_assignments;
-    // this.a
     // this.assignme
     this.assignmentText = this.assignmentSourceChunk.split('.').slice(1,this.no_assignments-1).join(".")
-  //   for (this.iter = this.first_assignment_pointer; this.iter < this.last_assignment_pointer;  this.iter++)
-    
-  //   this.assignmentText += this.assignmentSourceChunk[this.iter]
-    
-  //   'Otrdien, es pieceļos astotais no rīta \r\nEs eju uz vannas istaba un es duša\r\nEs īzeja no dušas un nosusinu matus';
+    for (this.iter = this.first_assignment_pointer; this.iter < this.last_assignment_pointer;  this.iter++)
+    this.assignmentText += this.assignmentSourceChunk[this.iter]
+    console.log(this.assignmentText)
   // }
   }
 
@@ -238,7 +239,9 @@ export class AppComponent {
   clickEvent(){ 
     // console.log(this.answerInput);
     // console.log()
+    this.submission_phase = false;
     this.result='';
+    this.proceed_phrase = "Next Assignment";
     const diff = Diff.diffChars(this.answerInput, "Ololo");
     diff.forEach((part
     : any) => {

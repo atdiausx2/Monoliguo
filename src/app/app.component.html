@@ -12,35 +12,22 @@
     <option value="intermediate">Intermediate</option>
     <option value="difficult">Difficult</option>
   </select>
-  
-
-
-
 
   <label>Select mother tongue</label> 
   <select name ="mother_language" id="mth_id">
   
   </select>
   </div> 
-  
-  
-  
   <div>
     <ul>
-
       <!-- <li>Username: {{}}</li.> -->
     </ul>
   </div>
-  
-  
   <div>
     <h2>Example Assignment: Correct errors in the sentence</h2>
-    <label>{{assignmentText}}
-    </label>
+    <label>{{assignmentText}} </label>
   </div>
   <h1 [innerHTML]="result"></h1>
-  
-
   <!-- {{}} -->
   <!-- {{name}} -->
 <!-- {{answerInput}} -->
@@ -54,8 +41,19 @@
 {{result}}
     <!-- Fill in the submission text:  -->
   <!-- </textarea> -->
-  <div>
-    <button (click) = "clickEvent()" class="btn">Submit answer</button> 
+  <div >
+
+    <div *ngIf="submission_phase == true">
+      <button
+      (click) = "clickEvent()" class="btn">Submit answer</button> 
+    </div>
+
+    <div *ngIf="submission_phase == false">
+      <button
+      (click) = "updateAssignment()" class="btn">Next Assignment</button> 
+    </div>
+
+
 <!-- <p class="space"></p> -->
     <button (click) = "clearTextEvent()" class="btn"> Clear Text</button> 
     <!-- <p class="space"></p> -->
