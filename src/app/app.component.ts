@@ -138,18 +138,29 @@ export class CSVManager {
 export class AppComponent {
   dataset: string[][] = [];
   // public userArray: User[] = [];
-  constructor(private http: HttpClient){
-    this.http.get('assets/essays_20211214.csv', {responseType: 'text'})
-    .subscribe(
+  constructor(private http: HttpClient)
+  {
+
+    
+
+    this.http.get('assets/NEW_source_texts.tsv', {responseType: 'text'}).
+subscribe(
         data => {
-            let csvToRowArray = data.split("\n");
-            // for (let index = 1; index < csvToRowArray.length - 1; index++) {
-            //   let row = csvToRowArray[index].split(",");
-            //   // console.log(row);
-            //   this.dataset.push(row);
-            // }
-        this.dataset = csvToRowArray.map(data => data.split(",") )
+            let csvToRowArray = data.split('\n');
+            // console.log('csvToRowArrayLength', csvToRowArray.length);
+            for (let index = 1; index < csvToRowArray.length - 1; index++) {
+              let row = csvToRowArray[index].split("\t");
+              // if ( index == 1){ 
+                // console.log('row', row);
+              // }
+              this.dataset.push(row);
+            }
+            // this.dataset.push()
+        this.dataset = csvToRowArray.map(data => data.split("\t") )
         // console.log(this.dataset);
+        // console.log(this.dataset[1][9]
+        //   )
+        //   console.log(this.dataset[23][10])
         },
         error => {
             console.log(error);
@@ -167,8 +178,10 @@ export class AppComponent {
 
   no_assignments: number = 0; 
   difficultyLevel:string = 'intermediate';
-  difficultyDictionary = new Map().set('Difficult', 3).set('Intermediate', 2).set('Beginner', 1); 
-  assignmentText = 'Otrdien, es pieceļos astotais no rīta \r\nEs eju uz vannas istaba un es duša\r\nEs īzeja no dušas un nosusinu matus';
+  difficultyDictionary = new Map().set('difficult', 3).set('intermediate', 2).set('beginner', 1); 
+
+  assignmentCorruptedText = 'Otrdien, es pieceļos astotais no rīta \r\nEs eju uz vannas istaba un es duša\r\nEs īzeja no dušas un nosusinu matus';
+  assignmentCorrectText = 'Otrdien es pieceļos astoņos no rīta. Es eju uz vannas istabu, un es eju dušā. Es izeju no dušas un nosusinu matus.'
 
   
   dataColumns: string[] = [
@@ -185,6 +198,8 @@ export class AppComponent {
   first_assignment_pointer: number = 0;
   last_assignment_pointer: any = 0; 
   iter:number = 0;
+  assignmentSourceCorruptedChunk:string = '';
+  assignmentSourceCorrectChunk:string ='';
 
   // dataset: any 
   // difficultyDictionary.set('Difficult', 3);
@@ -210,19 +225,36 @@ export class AppComponent {
   updateAssignment() {
     // this.loadData
     this.submission_phase = true;
-    this.no_assignments = Math.floor(Math.random()*this.difficultyDictionary.get(this.difficultyLevel))+1;
+    // console.log('difficulty', this.difficultyLevel)
+
+    console.log('dict result', this.difficultyDictionary.get(this.difficultyLevel))
+    // console.log(this.dataset)
+    this.no_assignments = Math.floor(Math.random()*this.difficultyDictionary.get(this.difficultyLevel))+2;
 
 
     this.first_assignment_pointer = Math.floor(Math.random()*1015);
-    this.assignmentSourceChunk= (this.dataset[this.first_assignment_pointer]).toString();
+    // console.log(this.dataset[this.first_assignment_pointer][9])
+    // console.log(this.dataset[this.first_assignment_pointer][8])
+    // console.log('dataset', this.dataset )
+    this.assignmentSourceCorruptedChunk = this.dataset[this.first_assignment_pointer][9]; 
+    this.assignmentSourceCorrectChunk = this.dataset[this.first_assignment_pointer][10];
+    // this.assignment
+    // console.log('SourceCorrectChunk', this.assignmentSourceCorrectChunk)
 
     // this.last_assignment_pointer  = this.first_assignment_pointer + this.no_assignments;
     // this.assignme
-    this.assignmentText = this.assignmentSourceChunk.split('.').slice(1,this.no_assignments-1).join(".")
-    for (this.iter = this.first_assignment_pointer; this.iter < this.last_assignment_pointer;  this.iter++)
-    this.assignmentText += this.assignmentSourceChunk[this.iter]
-    console.log(this.assignmentText)
-  // }
+    // console.log('this.no_assignments:' ,  this.no_assignments)
+    // console.log(this.dataset[this.first_assignment_pointer])
+    this.assignmentCorruptedText = this.assignmentSourceCorruptedChunk.split('.').slice(0,this.no_assignments).join(".").replace('"', '') + '.'
+    this.assignmentCorrectText= this.assignmentSourceCorrectChunk.split('.').slice(0,this.no_assignments).join(".").replace('"', '') + '.'
+
+    console.log(this.assignmentCorrectText)
+// !fixme: we do not need this ! 
+// 
+  //   for (this.iter = this.first_assignment_pointer; this.iter < this.last_assignment_pointer;  this.iter++)
+  //   this.assignmentText += this.assignmentSourceCorruptedChunk[this.iter]
+  //   console.log(this.assignmentText)
+  // // }
   }
 
   copyToClipboardEvent(){ 
@@ -237,12 +269,10 @@ export class AppComponent {
   }
 
   clickEvent(){ 
-    // console.log(this.answerInput);
-    // console.log()
     this.submission_phase = false;
     this.result='';
     this.proceed_phrase = "Next Assignment";
-    const diff = Diff.diffChars(this.answerInput, "Ololo");
+    const diff = Diff.diffChars(this.answerInput, this.assignmentCorrectText);
     diff.forEach((part
     : any) => {
     // green for additions, red for deletions
