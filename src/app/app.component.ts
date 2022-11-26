@@ -178,7 +178,7 @@ subscribe(
 
   no_assignments: number = 0; 
   difficultyLevel:string = 'intermediate';
-  difficultyDictionary = new Map().set('difficult', 3).set('intermediate', 2).set('beginner', 1); 
+  difficultyDictionary = new Map().set('difficult', 3).set('intermediate', 2).set('easy', 1); 
 
   assignmentCorruptedText = 'Otrdien, es pieceļos astotais no rīta \r\nEs eju uz vannas istaba un es duša\r\nEs īzeja no dušas un nosusinu matus';
   assignmentCorrectText = 'Otrdien es pieceļos astoņos no rīta. Es eju uz vannas istabu, un es eju dušā. Es izeju no dušas un nosusinu matus.'
@@ -245,8 +245,8 @@ subscribe(
     // this.assignme
     // console.log('this.no_assignments:' ,  this.no_assignments)
     // console.log(this.dataset[this.first_assignment_pointer])
-    this.assignmentCorruptedText = this.assignmentSourceCorruptedChunk.split('.').slice(0,this.no_assignments).join(".").replace('"', '') + '.'
-    this.assignmentCorrectText= this.assignmentSourceCorrectChunk.split('.').slice(0,this.no_assignments).join(".").replace('"', '') + '.'
+    this.assignmentCorruptedText = this.assignmentSourceCorruptedChunk.split(/(?=[. ! ?])/).slice(0,this.no_assignments).join(".").replace('"', '') + '.'
+    this.assignmentCorrectText= this.assignmentSourceCorrectChunk.split(/(?=[.,!?])/).slice(0,this.no_assignments).join(".").replace('"', '') + '.'
 
     console.log(this.assignmentCorrectText)
 // !fixme: we do not need this ! 
