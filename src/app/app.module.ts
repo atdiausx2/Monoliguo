@@ -10,6 +10,7 @@ import { CrisisListComponent } from './crisis-list/crisis-list.component';
 // import {}
 // import { HeroesListComponent } from './heroes-list/heroes-list.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ClipboardModule } from 'ngx-clipboard';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     BrowserModule,
     AppRoutingModule, 
     FormsModule, 
-    HttpClientModule
+    HttpClientModule,
+    ClipboardModule
   ],
   providers: [],
   bootstrap: [

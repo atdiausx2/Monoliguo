@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
+import {ClipboardService} from 'ngx-clipboard';
+
 // require('lodash'); 
 // import * as fs from 'fs';
 // const fs = window.require('fs');
@@ -139,7 +141,11 @@ export class AppComponent {
   dataset: string[][] = [];
   // public userArray: User[] = [];
   constructor(private http: HttpClient)
+
+ 
   {
+     
+
 
     
 
@@ -178,7 +184,9 @@ subscribe(
 
   no_assignments: number = 0; 
   difficultyLevel:string = 'intermediate';
+  
   difficultyDictionary = new Map().set('difficult', 3).set('intermediate', 2).set('easy', 1); 
+  motherLanguage:string='English';
 
   assignmentCorruptedText = 'Otrdien, es pieceļos astotais no rīta \r\nEs eju uz vannas istaba un es duša\r\nEs īzeja no dušas un nosusinu matus';
   assignmentCorrectText = 'Otrdien es pieceļos astoņos no rīta. Es eju uz vannas istabu, un es eju dušā. Es izeju no dušas un nosusinu matus.'
@@ -200,6 +208,22 @@ subscribe(
   iter:number = 0;
   assignmentSourceCorruptedChunk:string = '';
   assignmentSourceCorrectChunk:string ='';
+  currencyAmount:number=100;
+  currencyScale = 10; 
+  currencyAmountChange:string =''; 
+  userRating:number =0;
+  ratingScale:number = 5;
+  userRatingRawChange:number = 0;
+  userRatingChange: string = '';
+  totalUserRatingChange: number = 0;
+  totalUserRatingChangeString: string = '';
+  nAssignmentsDone:number=0; 
+  nAssignmentsTotal:number= 4; 
+  taskSeriesCompleted:boolean =false;
+
+
+  showNextAssignmentButton:boolean = false;
+  showSubmissionButton:boolean = true;
 
   // dataset: any 
   // difficultyDictionary.set('Difficult', 3);
@@ -223,8 +247,14 @@ subscribe(
 
 
   updateAssignment() {
+    this.showNextAssignmentButton= false;
     // this.loadData
     this.submission_phase = true;
+    if (!this.taskSeriesCompleted){
+
+
+      this.showSubmissionButton = true;
+    }
     // console.log('difficulty', this.difficultyLevel)
 
     console.log('dict result', this.difficultyDictionary.get(this.difficultyLevel))
@@ -245,8 +275,17 @@ subscribe(
     // this.assignme
     // console.log('this.no_assignments:' ,  this.no_assignments)
     // console.log(this.dataset[this.first_assignment_pointer])
-    this.assignmentCorruptedText = this.assignmentSourceCorruptedChunk.split(/(?=[. ! ?])/).slice(0,this.no_assignments).join(".").replace('"', '') + '.'
-    this.assignmentCorrectText= this.assignmentSourceCorrectChunk.split(/(?=[.,!?])/).slice(0,this.no_assignments).join(".").replace('"', '') + '.'
+
+// purging the text
+    let Regex1: RegExp = /"/ 
+    let Regex2: RegExp = /\?\.\!/
+    let RegexCaps: RegExp = /[ABCDEFGHIJKLMNOPQRSTUVWXYZ]/
+    // new RegExp('\*"')
+   
+    this.assignmentCorruptedText = this.assignmentSourceCorruptedChunk.split(/(?=[ABCDEFGHIJKLMNOPQRSTUVWXYZ])/).slice(0,this.no_assignments).join(" ").replace(Regex1, '') 
+
+    // map(sentence => sentence.replace(Regex2, '')
+    this.assignmentCorrectText=  this.assignmentSourceCorrectChunk.split(/(?=[ABCDEFGHIJKLMNOPQRSTUVWXYZ])/) .slice(0,this.no_assignments).join(" ").replace(Regex1, '')
 
     console.log(this.assignmentCorrectText)
 // !fixme: we do not need this ! 
@@ -257,7 +296,10 @@ subscribe(
   // // }
   }
 
-  copyToClipboardEvent(){ 
+  copyToClipboardEvent(
+    //  clipboardApi: ClipboardService
+     ){
+    // clipboardApi.copyFromContent(this.answerInput)s
   };
 
   clearTextEvent(){
@@ -268,11 +310,53 @@ subscribe(
     
   }
 
-  clickEvent(){ 
-    this.submission_phase = false;
+  updateCurrency( ){
+   this.currencyAmount -= this.currencyScale;
+   
+   this.currencyAmountChange =  '( - ' + this.currencyScale.toString() + ')'
+  }
+
+  updateRating(n_wrong_chars: number){ 
+    // correction_quality: number;    
+    var correction_quality =  0.5 - Math.min(n_wrong_chars/this.answerInput.length, 1)
+
+    this.userRatingRawChange = Math.max(Math.round(correction_quality*this.ratingScale), 0)
+    if( this.userRatingRawChange> 0){ 
+      this.userRatingChange = ' ( + ' +  this.userRatingRawChange.toString() + ')'
+    }
+    else if (this.userRatingRawChange < 0 ) {
+      this.userRatingChange =  '( ' +  this.userRatingRawChange.toString()+ ')'
+    } 
+    else { 
+      
+    }
+    this.totalUserRatingChange = this.totalUserRatingChange + this.userRatingRawChange; 
+    this.totalUserRatingChangeString = Math.round(this.totalUserRatingChange).toString()
+    console.log('user rating change', this.userRatingChange)
+    console.log('correction_quality', correction_quality)
+    this.userRating = Math.round(Math.max(this.userRating + correction_quality*this.ratingScale, 0))
+
+  }
+
+  submissionEvent(){ 
+    this.showSubmissionButton = false;
+    this.currencyAmountChange = ''; 
+
+    this.nAssignmentsDone+=1;
+    if (this.nAssignmentsDone >= this.nAssignmentsTotal){ 
+        this.taskSeriesCompleted = true;
+        
+    }
+    if (!this.taskSeriesCompleted ){
+
+      this.showNextAssignmentButton = true;
+
+    }
+    // this.submission_phase = false;
     this.result='';
     this.proceed_phrase = "Next Assignment";
     const diff = Diff.diffChars(this.answerInput, this.assignmentCorrectText);
+    this.updateRating(diff.length)
     diff.forEach((part
     : any) => {
     // green for additions, red for deletions

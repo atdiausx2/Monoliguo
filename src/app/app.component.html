@@ -1,30 +1,61 @@
 <body>
-  <h1> {{title}}  Monolinguo app</h1>
-  <router-outlet></router-outlet>
+  <h1> {{title}} app</h1>
+  <router-outlet>
+
+  </router-outlet>
   
   <!-- choose box for difficulty -->
-  <div>
+  <!-- <div> -->
 <img src="./assets/raccoon_skin.jpg"> 
-    <label for="difficulty">Selected difficulty: {{difficultyLevel}}</label>
+<br>
+<div> 
+    <label class = "choice" for="difficulty">Selected difficulty: {{difficultyLevel}}</label>
   <select   [(ngModel)]="difficultyLevel" [value]="difficultyLevel"
   class="choice" name="difficulty" id="id_difficulty">
     <option value="easy">Easy</option>
     <option value="intermediate">Intermediate</option>
     <option value="difficult">Difficult</option>
   </select>
+</div>
+<!-- <div ="choice"> -->
+<div>
+  <label class="choice" >Selected mother language: {{motherLanguage}}</label> 
+  <!-- <select name ="mother_language" id="mth_id"> -->
+    <select   [(ngModel)]="motherLanguage" [value]="motherLanguage"
+    class="choice" name="mother_language" id="mother_language">
+    <option value="English">English</option>
+    <option value="German">German</option>
+      <option value="Swedish">Swedish</option>
+      <option value="Finnish">Finnish</option>
+      <option value="Norwegian">Norwegian</option>
+      <option value="Italian">Italian</option>
+      <option value="Portuguese">Portuguese</option>
+      <option value="Arabic">Arabic</option>
+      <option value="Persian">Persian</option>
+      <option value="Turkish">Turkish</option>
+      <option value="Russian">Russian</option>
+    </select>
+<div>
+  <label class="btn" for="currency">Game Currency Amount: {{currencyAmount}} {{currencyAmountChange}}</label>
+  <label  class="btn" for="game_experience">Current User Rating: {{userRating}} {{userRatingChange}} </label>
+  <!-- this button would provide solution with guaranteed UX increase in exchange for Game Currency -->. 
+  <!-- Game currency is also achievable via getting badges -->
+  <button (click)="updateCurrency()" class="btn">Get Hint</button>
+</div>
+</div>
+<!-- </div> -->
 
-  <label>Select mother tongue</label> 
-  <select name ="mother_language" id="mth_id">
-  </select>
-  </div> 
+<!-- </div>  -->
   <div>
     <ul>
       <!-- <li>Username: {{}}</li.> -->
     </ul>
   </div>
   <div>
-    <h2>Example Assignment: Correct errors in the sentence</h2>
-    <label>{{assignmentCorrectText}} </label>
+    <h2>Example Assignment: Correct errors in the sentence.</h2>
+
+    <h3> ATTENTION: Auxiliary writing marks, incl. dots in the middle of sentences, should be left as they are</h3>
+    <label >{{assignmentCorrectText}} </label>
   </div>
   <h1 [innerHTML]="result"></h1>
   <!-- {{}} -->
@@ -41,13 +72,22 @@
     <!-- Fill in the submission text:  -->
   <!-- </textarea> -->
   <div >
+<div>
+  <div *ngIf="showSubmissionButton == true">
+    <button
+    (click) = "submissionEvent()" class="btn">Submit answer</button> 
+  </div>
+  <div *ngIf="taskSeriesCompleted==false">
+<label for="assignments_done ">Assignments done: {{nAssignmentsDone}}/{{nAssignmentsTotal}}</label>
+</div>
+  <div *ngIf="taskSeriesCompleted==true">
+    <label for="assignments_done ">Congratulations! All {{nAssignmentsDone}}/{{nAssignmentsTotal}} Assignments done, Your accumulated rating gain is {{totalUserRatingChangeString}}! Keep strengthening your skills!</label>
+</div>
+</div>
+   
 
-    <div *ngIf="submission_phase == true">
-      <button
-      (click) = "clickEvent()" class="btn">Submit answer</button> 
-    </div>
 
-    <div *ngIf="submission_phase == false">
+    <div *ngIf="(showNextAssignmentButton == true)">
       <button
       (click) = "updateAssignment()" class="btn">Next Assignment</button> 
     </div>
@@ -56,7 +96,10 @@
 <!-- <p class="space"></p> -->
     <button (click) = "clearTextEvent()" class="btn"> Clear Text</button> 
     <!-- <p class="space"></p> -->
-    <button (click) ="copyToClipboardEvent()" class="btn"> Copy Text</button>
+
+    <!-- <button ngxClipboard [cbContent]="'CTC Inline Text.'" [container]="container">Copy Content</button> -->
+    <button (click) ="copyToClipboardEvent()" 
+    class="btn"> Copy Text</button>
     <!-- <p class="space"></p> -->
 
     <button class="btn"></button>
